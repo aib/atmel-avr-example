@@ -1,5 +1,5 @@
 ## About
-This is a sample repository for working `avr-gcc` and `avrdude` on simple Atmel projects.
+This is a sample repository for working with `avr-gcc` and `avrdude` on simple Atmel projects.
 
 ## Usage
 `make program`
