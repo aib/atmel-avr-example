@@ -6,7 +6,9 @@ F_CPU = 8000000
 FUSE_L = 0b11011111
 FUSE_H = 0b11011001
 CC = avr-gcc
+CLANG = clang --target=avr
 CFLAGS = -Wall -O2 -mmcu=$(DEVICE) -DF_CPU=$(F_CPU)UL -I$(AVR_TOOLCHAIN_PATH)/include
+LLC = llc
 LD = avr-gcc
 LDFLAGS =
 
@@ -23,7 +25,14 @@ program: $(PROGRAM)
 
 .PHONY: clean
 clean:
-	$(RM) *.o *.elf *.hex
+	$(RM) *.ll *.o *.elf *.hex
+
+.SUFFIXES:
+%.ll: %.c
+	$(CLANG) -S $(CFLAGS) -emit-llvm -o $@ $^
+
+%.o: %.ll
+	$(LLC) -filetype=obj -o $@ $^
 
 %.elf: %.o
 	$(LD) -s $(LDFLAGS) -o $@ $^
