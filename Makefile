@@ -1,3 +1,4 @@
+AVR_TOOLCHAIN_PATH = /usr/lib/avr
 DEVICE = atmega328p
 PROGRAMMER = usbtiny
 PROGRAMMER_PORT = usb
@@ -5,7 +6,7 @@ F_CPU = 8000000
 FUSE_L = 0b11011111
 FUSE_H = 0b11011001
 CC = avr-gcc
-CFLAGS = -Wall -O2 -mmcu=$(DEVICE) -DF_CPU=$(F_CPU)UL -I.
+CFLAGS = -Wall -O2 -mmcu=$(DEVICE) -DF_CPU=$(F_CPU)UL -I$(AVR_TOOLCHAIN_PATH)/include
 
 PROGRAM = main.hex
 
