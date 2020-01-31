@@ -7,6 +7,8 @@ FUSE_L = 0b11011111
 FUSE_H = 0b11011001
 CC = avr-gcc
 CFLAGS = -Wall -O2 -mmcu=$(DEVICE) -DF_CPU=$(F_CPU)UL -I$(AVR_TOOLCHAIN_PATH)/include
+LD = avr-gcc
+LDFLAGS =
 
 PROGRAM = main.hex
 
@@ -27,4 +29,4 @@ clean:
 	avr-objcopy -j .text -j .data -O ihex $^ $@
 
 %.elf: %.o
-	$(CC) -s $(CFLAGS) -o $@ $^
+	$(LD) -s $(LDFLAGS) -o $@ $^
