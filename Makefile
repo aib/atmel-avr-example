@@ -25,8 +25,8 @@ program: $(PROGRAM)
 clean:
 	$(RM) *.o *.elf *.hex
 
-%.hex: %.elf
-	avr-objcopy -j .text -j .data -O ihex $^ $@
-
 %.elf: %.o
 	$(LD) -s $(LDFLAGS) -o $@ $^
+
+%.hex: %.elf
+	avr-objcopy -j .text -j .data -O ihex $^ $@
