@@ -1,25 +1,27 @@
-AVR_TOOLCHAIN_PATH = /usr/lib/avr
 DEVICE = atmega328p
-PROGRAMMER = usbtiny
-PROGRAMMER_PORT = usb
-F_CPU = 8000000
-FUSE_L = 0b11011111
-FUSE_H = 0b11011001
+F_CPU = 16000000
+AVR_PROGRAMMER = usbtiny
+AVR_PROGRAMMER_PORT = usb
+
 CC = avr-gcc
-CFLAGS = -Wall -O2 -mmcu=$(DEVICE) -DF_CPU=$(F_CPU)UL -I$(AVR_TOOLCHAIN_PATH)/include
 LD = avr-gcc
-LDFLAGS =
+OBJCOPY = avr-objcopy
+AVRDUDE = avrdude
+
+CFLAGS = -mmcu=$(DEVICE) -DF_CPU=$(F_CPU)UL -Wall -O2
+LDFLAGS = $(CFLAGS)
+AVR_PROGCMD = $(AVRDUDE) -c $(AVR_PROGRAMMER) -P $(AVR_PROGRAMMER_PORT) -p $(DEVICE)
 
 PROGRAM = main.hex
 
-.PHONY: avrdude-test
-avrdude-test:
-	avrdude -p $(DEVICE) -c $(PROGRAMMER) -P $(PROGRAMMER_PORT) -v
-	@echo avrdude test passed
+.PHONY: test-programmer
+test-programmer:
+	$(AVR_PROGCMD) -n -v
+	@echo Programmer test passed
 
 .PHONY: program
 program: $(PROGRAM)
-	avrdude -p $(DEVICE) -c $(PROGRAMMER) -P $(PROGRAMMER_PORT) -U hfuse:w:$(FUSE_H):m -U lfuse:w:$(FUSE_L):m -U flash:w:$(PROGRAM):i
+	$(AVR_PROGCMD) -U flash:w:$(PROGRAM):i
 
 .PHONY: clean
 clean:
@@ -29,4 +31,4 @@ clean:
 	$(LD) -s $(LDFLAGS) -o $@ $^
 
 %.hex: %.elf
-	avr-objcopy -j .text -j .data -O ihex $^ $@
+	$(OBJCOPY) -j .text -j .data -O ihex $^ $@
