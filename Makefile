@@ -3,6 +3,9 @@ F_CPU = 16000000
 AVR_PROGRAMMER = usbtiny
 AVR_PROGRAMMER_PORT = usb
 
+TARGET = main
+SRC = $(TARGET).c
+
 CC = avr-gcc
 LD = avr-gcc
 OBJCOPY = avr-objcopy
@@ -12,22 +15,20 @@ CFLAGS = -mmcu=$(DEVICE) -DF_CPU=$(F_CPU)UL -Wall -O2
 LDFLAGS = $(CFLAGS)
 AVR_PROGCMD = $(AVRDUDE) -c $(AVR_PROGRAMMER) -P $(AVR_PROGRAMMER_PORT) -p $(DEVICE)
 
-PROGRAM = main.hex
-
 .PHONY: test-programmer
 test-programmer:
 	$(AVR_PROGCMD) -n -v
 	@echo Programmer test passed
 
 .PHONY: program
-program: $(PROGRAM)
-	$(AVR_PROGCMD) -U flash:w:$(PROGRAM):i
+program: $(TARGET).hex
+	$(AVR_PROGCMD) -U flash:w:$(TARGET).hex:i
 
 .PHONY: clean
 clean:
 	$(RM) *.o *.elf *.hex
 
-%.elf: %.o
+$(TARGET).elf: $(SRC:.c=.o)
 	$(LD) -s $(LDFLAGS) -o $@ $^
 
 %.hex: %.elf
